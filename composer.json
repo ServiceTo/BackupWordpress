@@ -1,0 +1,26 @@
+{
+	"name": "service-to/backup-wordpress",
+	"type": "library",
+	"description": "Library to find wordpress installations and back them up off site.",
+	"keywords": ["backup", "wordpress"],
+	"homepage": "https://github.com/ServiceTo/BackupWordpress",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Ian Service",
+			"email": "ian@service.to",
+			"homepage": "https://ian.service.to",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0",
+		"league/flysystem": "^1.0",
+		"league/flysystem-aws-s3-v3": "^1.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"ServiceTo\\": "src"
+		}
+	}
+}
