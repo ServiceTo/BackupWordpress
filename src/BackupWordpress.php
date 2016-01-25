@@ -7,6 +7,7 @@ class BackupWordpress {
 	public $tempdir = "/tmp/";
 	public $tar = "/bin/tar";
 	public $bzip2 = "/usr/bin/bzip2";
+	public $keep = 5;
 
 	private $properties = [];
 
@@ -96,7 +97,28 @@ class BackupWordpress {
 			}
 
 			unlink($tempfile);
+
+			$this->cleanUpOldBackups($documentroot, $filesystem);
 		}
 		return false;
+	}
+
+
+	function cleanUpOldBackups($documentroot, $filesystem) {
+		$files = [];
+		$filesort = [];
+		$contents = $filesystem->listContents("backups");
+		foreach ($contents as $file) {
+			if (substr($file["basename"], 0, strlen($this->properties["servername"]) == $this->properties["servername"])) {
+				$files[] = $file;
+				$filesort[] = $file["basename"];
+			}
+		}
+		array_multisort($filesort, $files);
+		if (count($files) > $this->keep * 2) {
+			// delete the oldest pair (files + sql)
+			$filesystem->delete($files[0]["path"])
+			$filesystem->delete($files[1]["path"])
+		}
 	}
 }
