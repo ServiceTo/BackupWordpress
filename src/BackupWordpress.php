@@ -79,7 +79,7 @@ class BackupWordpress {
 				fclose($stream);
 			}
 
-			unlink($tempfile);
+			unlink($tempfile . ".bz2");
 
 			// back up the wordpress content
 			$tempfile = $this->tempdir . $this->properties["servername"] . "." . date("Y-m-d.H.i.s") . ".tar.bz2";
