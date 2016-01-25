@@ -2,11 +2,11 @@
 namespace ServiceTo;
 
 class BackupWordpress {
-	private $mysqldump = "/usr/bin/mysqldump";
+	public $mysqldump = "/usr/bin/mysqldump";
 	public $configdir = "/etc/httpd/conf.d/users/";
-	private $tempdir = "/tmp/";
-	private $tar = "/bin/tar";
-	private $bzip2 = "/usr/bin/bzip2";
+	public $tempdir = "/tmp/";
+	public $tar = "/bin/tar";
+	public $bzip2 = "/usr/bin/bzip2";
 
 	private $properties = [];
 
@@ -89,7 +89,7 @@ class BackupWordpress {
 
 			print("Pushing to Flysystem\n");
 			$stream = fopen($tempfile, "r+");
-			$filesystem->writeStream("backups/" . $this->properties["servername"] . "." . date("Y-m-d.H.i.s") . ".tar" , $stream);
+			$filesystem->writeStream("backups/" . $this->properties["servername"] . "." . date("Y-m-d.H.i.s") . ".tar.bz2" , $stream);
 
 			if (is_resource($stream)) {
 				fclose($stream);
