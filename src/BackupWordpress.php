@@ -79,6 +79,8 @@ class BackupWordpress {
 				fclose($stream);
 			}
 
+			unlink($tempfile);
+
 			// back up the wordpress content
 			$tempfile = $this->tempdir . $this->properties["servername"] . "." . date("Y-m-d.H.i.s") . ".tar.bz2";
 			print("Backing up files to " . $tempfile . "\n");
@@ -93,6 +95,7 @@ class BackupWordpress {
 				fclose($stream);
 			}
 
+			unlink($tempfile);
 		}
 		return false;
 	}
