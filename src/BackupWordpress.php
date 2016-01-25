@@ -28,7 +28,7 @@ class BackupWordpress {
 			$lines = file($httpdconfigfile);
 			foreach ($lines as $line) {
 				if (substr(trim($line), 0, strlen("ServerName")) == "ServerName") {
-					$properties["servername"] = trim(substr(trim($line), strlen("ServerName") + 1), " \t\n\r\0\x0B\"");
+					$this->properties["servername"] = trim(substr(trim($line), strlen("ServerName") + 1), " \t\n\r\0\x0B\"");
 				}
 				if (substr(trim($line), 0, strlen("DocumentRoot")) == "DocumentRoot") {
 					$documentroot = trim(substr(trim($line), strlen("DocumentRoot") + 1), " \t\n\r\0\x0B\"");
@@ -62,7 +62,7 @@ class BackupWordpress {
 
 	function backupWordpress($documentroot, $filesystem) {
 		if ($this->properties["DB_NAME"] && $this->properties["DB_USER"] && $this->properties["DB_PASSWORD"] && $this->properties["DB_HOST"]) {
-			$tempfile = $this->tempdir . $this->properties["DB_NAME"] . "." . date("Y-m-d-h-i-s") . ".sql";
+			$tempfile = $this->tempdir . $this->properties["servername"] . "." . $this->properties["DB_NAME"] . "." . date("Y-m-d.H.i.s") . ".sql";
 			print("Backing up database to " . $tempfile . "\n");
 
 			system($this->mysqldump . " -h " . $this->properties["DB_HOST"] . " -u " . $this->properties["DB_USER"] . " -p" . $this->properties["DB_PASSWORD"] . " --lock-tables=false " . $this->properties["DB_NAME"] . " > " . $tempfile);
@@ -73,21 +73,21 @@ class BackupWordpress {
 
 			print("Pushing to Flysystem\n");
 			$stream = fopen($tempfile . ".bz2", "r+");
-			$filesystem->writeStream("backups/" . $this->properties["DB_NAME"] . "." . date("Y-m-d-h-i-s") . ".sql.bz2", $stream);
+			$filesystem->writeStream("backups/" . $this->properties["servername"] . "." . $this->properties["DB_NAME"] . "." . date("Y-m-d.H.i.s") . ".sql.bz2", $stream);
 
 			if (is_resource($stream)) {
 				fclose($stream);
 			}
 
 			// back up the wordpress content
-			$tempfile = $this->tempdir . $properties["servername"] . "." . date("Y-m-d-h-i-s") . ".tar.bz2";
+			$tempfile = $this->tempdir . $this->properties["servername"] . "." . date("Y-m-d.H.i.s") . ".tar.bz2";
 			print("Backing up files to " . $tempfile . "\n");
 
 			system($this->tar . " -cjf " . $tempfile . " -C " . $documentroot . " .");
 
 			print("Pushing to Flysystem\n");
 			$stream = fopen($tempfile, "r+");
-			$filesystem->writeStream("backups/" . $properties["servername"] . "." . date("Y-m-d-h-i-s") . ".tar" , $stream);
+			$filesystem->writeStream("backups/" . $this->properties["servername"] . "." . date("Y-m-d.H.i.s") . ".tar" , $stream);
 
 			if (is_resource($stream)) {
 				fclose($stream);
