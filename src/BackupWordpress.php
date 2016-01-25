@@ -117,8 +117,8 @@ class BackupWordpress {
 		array_multisort($filesort, $files);
 		if (count($files) > $this->keep * 2) {
 			// delete the oldest pair (files + sql)
-			$filesystem->delete($files[0]["path"])
-			$filesystem->delete($files[1]["path"])
+			$filesystem->delete($files[0]["path"]);
+			$filesystem->delete($files[1]["path"]);
 		}
 	}
 }
