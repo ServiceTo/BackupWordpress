@@ -5,7 +5,7 @@ class BackupWordpress {
 	private $mysqldump = "/usr/bin/mysqldump";
 	public $configdir = "/etc/httpd/conf.d/users/";
 	private $tempdir = "/tmp/";
-	private $tar = "/bin/tar"
+	private $tar = "/bin/tar";
 	private $bzip2 = "/usr/bin/bzip2";
 
 	function backup($filesystem) {
