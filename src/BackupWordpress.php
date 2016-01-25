@@ -62,3 +62,4 @@ class BackupWordpress {
 		}
 		return false;
 	}
+}
