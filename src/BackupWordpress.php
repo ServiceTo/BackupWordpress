@@ -63,7 +63,7 @@ class BackupWordpress {
 
 	function backupWordpress($documentroot, $filesystem) {
 		if ($this->properties["DB_NAME"] && $this->properties["DB_USER"] && $this->properties["DB_PASSWORD"] && $this->properties["DB_HOST"]) {
-			$tempfile = $this->tempdir . $this->properties["servername"] . "." . $this->properties["DB_NAME"] . "." . date("Y-m-d.H.i.s") . ".sql";
+			$tempfile = $this->tempdir . $this->properties["servername"] . "." . date("Y-m-d.H.i.s") . "." . $this->properties["DB_NAME"] . ".sql";
 			print("Backing up database to " . $tempfile . "\n");
 
 			system($this->mysqldump . " -h " . $this->properties["DB_HOST"] . " -u " . $this->properties["DB_USER"] . " -p" . $this->properties["DB_PASSWORD"] . " --lock-tables=false " . $this->properties["DB_NAME"] . " > " . $tempfile);
@@ -74,7 +74,7 @@ class BackupWordpress {
 
 			print("Pushing to Flysystem\n");
 			$stream = fopen($tempfile . ".bz2", "r+");
-			$filesystem->writeStream("backups/" . $this->properties["servername"] . "." . $this->properties["DB_NAME"] . "." . date("Y-m-d.H.i.s") . ".sql.bz2", $stream);
+			$filesystem->writeStream("backups/" . $this->properties["servername"] . "." . date("Y-m-d.H.i.s") . "." . $this->properties["DB_NAME"] . ".sql.bz2", $stream);
 
 			if (is_resource($stream)) {
 				fclose($stream);
