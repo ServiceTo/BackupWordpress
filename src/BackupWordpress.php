@@ -12,6 +12,7 @@ class BackupWordpress {
 		if ($dh = opendir($this->configdir)) {
 			while (false !== ($entry = readdir($dh))) {
 				if (strpos($entry, ".conf") !== false && is_file($this->configdir . $entry)) {
+					print("Opening " . $this->configdir . $entry . "\n");
 					$this->checkForBackup($this->configdir . $entry, $filesystem);
 				}
 			}
@@ -24,6 +25,7 @@ class BackupWordpress {
 			foreach ($lines as $line) {
 				if (substr(trim($line), 0, strlen("DocumentRoot")) == "DocumentRoot") {
 					$documentroot = trim(substr(trim($line), strlen("DocumentRoot") + 1), " \t\n\r\0\x0B\"");
+					print("Looking in " . $documentroot . "\n");
 					if ($this->checkForWordpress($documentroot)) {
 						$this->backupWordpress($documentroot, $filesystem);
 					}
@@ -34,9 +36,11 @@ class BackupWordpress {
 
 	function checkForWordpress($documentroot) {
 		if (file_exists($documentroot . "/wp_config.php")) {
+			print("Wordpress config file found in " . $documentroot . "/wp_config.php\n")
 			$lines = file($documentroot . "/wp_config.php");
 			foreach ($lines as $line) {
 				if (substr($line, 0, strlen("define")) == "define") {
+					print(trim($line) . "\n");
 					eval(trim($line));
 				}
 			}
@@ -47,6 +51,7 @@ class BackupWordpress {
 	function backupWordpress($documentroot, $filesystem) {
 		if (DB_NAME && DB_USER && DB_PASSWORD && DB_HOST) {
 			$tempfile = $this->tempdir . DB_NAME . "." . date("Y-m-d-h-i-s") . ".sql";
+			print("Backing up database to " . $tempfile . "\n");
 
 			system($this->mysqldump . " -h " . DB_HOST . " -u " . DB_USER . " -p" . DB_PASSWORD . " " . DB_NAME . " > " . $tempfile);
 
