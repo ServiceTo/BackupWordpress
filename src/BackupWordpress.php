@@ -8,24 +8,24 @@ class BackupWordpress {
 	private $tar = "/bin/tar"
 	private $bzip2 = "/usr/bin/bzip2";
 
-	function backup() {
+	function backup($filesystem) {
 		if ($dh = opendir($this->configdir)) {
 			while (false !== ($entry = readdir($dh))) {
 				if (strpos($entry, ".conf") !== false && is_file($this->configdir . $entry)) {
-					$this->checkForBackup($this->configdir . $entry);
+					$this->checkForBackup($this->configdir . $entry, $filesystem);
 				}
 			}
 		}
 	}
 
-	function checkForBackup($httpdconfigfile) {
+	function checkForBackup($httpdconfigfile, $filesystem) {
 		if (file_exists($httpdconfigfile)) {
 			$lines = file($httpdconfigfile);
 			foreach ($lines as $line) {
 				if (substr(trim($line), 0, strlen("DocumentRoot") == "DocumentRoot") {
 					$documentroot = trim(substr(trim($line, strlen("DocumentRoot") + 1)), " \t\n\r\0\x0B\"");
 					if ($this->checkForWordpress($documentroot)) {
-						$this->backupWordpress($documentroot);
+						$this->backupWordpress($documentroot, $filesystem);
 					}
 				}
 			}
@@ -44,7 +44,7 @@ class BackupWordpress {
 		return false;
 	}
 
-	function backupWordpress($documentroot) {
+	function backupWordpress($documentroot, $filesystem) {
 		if (DB_NAME && DB_USER && DB_PASSWORD && DB_HOST) {
 			$tempfile = $this->tempdir . DB_NAME . "." . date("Y-m-d-h-i-s") . ".sql";
 
@@ -53,8 +53,12 @@ class BackupWordpress {
 			// compress file.
 			system($this->bzip2 . " " . $tempfile);
 
-			$stream = fopen($tempfile, "r+");
+			$stream = fopen($tempfile . ".bz2", "r+");
+			$filesystem->writeStream("backups/" . DB_NAME . "." . strfttime("%G-%m-%d") . ".bz2", $stream);
 
+			if (is_resource($stream)) {
+				fclose($stream);
+			}
 		}
 		return false;
 	}
