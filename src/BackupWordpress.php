@@ -23,7 +23,7 @@ class BackupWordpress {
 			$lines = file($httpdconfigfile);
 			foreach ($lines as $line) {
 				if (substr(trim($line), 0, strlen("DocumentRoot")) == "DocumentRoot") {
-					$documentroot = trim(substr(trim($line, strlen("DocumentRoot") + 1)), " \t\n\r\0\x0B\"");
+					$documentroot = trim(substr(trim($line), strlen("DocumentRoot") + 1), " \t\n\r\0\x0B\"");
 					if ($this->checkForWordpress($documentroot)) {
 						$this->backupWordpress($documentroot, $filesystem);
 					}
