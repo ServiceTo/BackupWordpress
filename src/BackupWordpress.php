@@ -109,13 +109,13 @@ class BackupWordpress {
 		$filesort = [];
 		$contents = $filesystem->listContents("backups");
 		foreach ($contents as $file) {
-			if (substr($file["basename"], 0, strlen($this->properties["servername"]) == $this->properties["servername"])) {
+			if (substr($file["basename"], 0, strlen($this->properties["servername"])) == $this->properties["servername"]) {
 				$files[] = $file;
 				$filesort[] = $file["basename"];
 			}
 		}
 		array_multisort($filesort, $files);
-		if (count($files) > $this->keep * 2) {
+		if (count($files) >= $this->keep * 2) {
 			// delete the oldest pair (files + sql)
 			$filesystem->delete($files[0]["path"]);
 			$filesystem->delete($files[1]["path"]);
